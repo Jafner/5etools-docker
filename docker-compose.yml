@@ -1,0 +1,9 @@
+version: "3"
+services:
+	5etools-docker:
+		container_name: 5etools-docker
+		image: joeyhafner/5etools-docker
+		volumes:
+			- 5etools-docker:/usr/local/apache2/htdocs
+		environment:
+			- IMG=true
