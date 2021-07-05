@@ -32,3 +32,7 @@ It is recommended that you use a host directory mapping if you are going to auto
 
 ## Updating the container
 Because this image is built on the auto-updater script, updating the container is very simple. Restart the container with `docker restart 5etools-docker`. When it restarts, the container will automatically check for an update and automatically download it before starting. 
+
+## Integrating a reverse proxy
+Supporting integration of a reverse proxy is beyond the scope of this guide. 
+However, any instructions which work for the base httpd (Apache) image, should also work for this, as it is minimally different.
