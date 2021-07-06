@@ -4,7 +4,7 @@ This is a simple image for hosting your own 5eTools instance. It is based on the
 
 ## Quickstart
 You can quick-start this image by running:
-`docker run -d -p 80:80 --name 5etools-docker 5etools-docker`
+`docker run -d -p 80:80 --name 5etools-docker jafner/5etools-docker`
 Then give the container a minute or two to come online and it will be accessible at `localhost`.
 
 ## Getting token images
