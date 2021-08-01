@@ -2,6 +2,7 @@
 # based on: https://wiki.5e.tools/index.php/5eTools_Install_Guide
 
 echo "STARTING" > /status
+echo " === Checking internet connectivity..."
 curl -s get.5e.tools > /dev/null
 
 if [ $? = 0 ] # if the get.5e.tools site is accessible
