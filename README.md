@@ -4,7 +4,9 @@ This is a simple image for hosting your own 5eTools instance. It is based on the
 
 ## Quickstart
 You can quick-start this image by running:
+
 `docker run -d -p 80:80 --rm --name 5etools-docker -v 5etools:/usr/local/apache2/htdocs jafner/5etools-docker`
+
 Then give the container a minute or two to come online and it will be accessible at `localhost`.
 When you stop the container, it will automatically delete itself, but the downloaded files will remain in the 5etools volume, so you can always start the container back up by re-running the command.
 
@@ -27,6 +29,9 @@ Note: host directory mappings must be absolute (cannot use `.` to refer to worki
 ### Updating the container
 Because this image is built on the auto-updater script, updating the container is very simple. Restart the container with `docker restart 5etools-docker`. When it restarts, the container will automatically check for an update and download it before starting. 
 Note: there is no way to disable this auto-updating behavior except to never restart the container. If you want a specific version of the container, it is recommended that you look into using the `httpd` image instead.
+
+### Using a different port
+Change the value on the left side of the `-p 80:80` flag to the desired port. Leave the value on the right alone.
 
 ### Integrating a reverse proxy
 Supporting integration of a reverse proxy is beyond the scope of this guide. 
