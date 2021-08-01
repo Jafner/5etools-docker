@@ -4,17 +4,9 @@ This is a simple image for hosting your own 5eTools instance. It is based on the
 
 ## Quickstart
 You can quick-start this image by running:
-`docker run -d -p 80:80 --rm --name 5etools-docker jafner/5etools-docker`
+`docker run -d -p 80:80 --rm --name 5etools-docker -v 5etools:/usr/local/apache2/htdocs jafner/5etools-docker`
 Then give the container a minute or two to come online and it will be accessible at `localhost`.
-This is what each part of that command does:
-```
-docker run \ # this is the basic docker command to start a docker container from a given image
--d \ # this is the 'daemon' flag, which allows the container to run in the background
--p 80:80 \ # this is the port flag which maps port 80 on the host to port 80 inside the container. You can change the host port mapping to something else (such as 8080) if you already have something running on port 80.
---rm \ # this is the remove flag, it tells docker to delete the container when it stops running. This is an option for portability.
---name 5etools-docker \ # this tells docker to set the name of the new container to 5etools-docker, rather than auto-generate a name. You can change this to whatever you like.
-jafner/5etools-docker # this is the docker image you want to run. jafner is the repository and 5etools-docker is the specific image. 
-```
+When you stop the container, it will automatically delete itself, but the downloaded files will remain in the 5etools volume, so you can always start the container back up by re-running the command.
 
 ### Getting token images
 You can configure the container's initialization script to download image files by setting the `IMG` environment variable:
