@@ -77,6 +77,7 @@ else # if get.5e.tools is not accessible
   else
     echo " === No version file found! You need to be online to grab the 5eTools files"
     exit 1
+  fi
 fi
 
 httpd-foreground
