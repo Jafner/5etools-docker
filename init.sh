@@ -1,5 +1,8 @@
 #!/bin/bash
 # based on: https://wiki.5e.tools/index.php/5eTools_Install_Guide
+
+echo "STARTING" > /status
+
 FN=`curl -s -k -I https://get.5e.tools/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent version
 FN=${FN//[$'\t\r\n"']} # remove quotes
 echo "FN: $FN"
@@ -17,6 +20,7 @@ if [ "$VER" != "$CUR" ]
 then
   echo " === Local version outdated, updating..."
   echo -n $VER > version
+  echo "DOWNLOADING" > /status
 
   rm ./index.html 2> /dev/null || true
 
@@ -25,32 +29,41 @@ then
   curl --progress-bar -k -O -J https://get.5e.tools/src/ -C -
   
   if [ "$IMG" = "true" ]; then
+    echo " === Downloading images === "
+    echo "DOWNLOADING IMAGES" > /status
     curl --progress-bar -k -O -J https://get.5e.tools/img/ -C -
   fi
   cd ..
 
   echo " === Extracting site..."
+  echo "EXTRACTING" > /status
   7z x ./download/$FN -o./ -y
 
   if [ "$IMG" = "true" ]; then
     echo " === Extracting images..."
+    echo "EXTRACTING IMAGES" > /status
     7z x ./download/$FN_IMG -o./img -y
     mv ./img/tmp/5et/img/* ./img
     rm -r ./img/tmp
   fi
 
   echo " === Configuring..."
+  echo "CONFIGURING" > /status
   find . -name \*.html -exec sed -i 's/"width=device-width, initial-scale=1"/"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/' {} \;
   sed -i 's/<head>/<head>\n<link rel="apple-touch-icon" href="icon\/icon-512.png">/' index.html
   sed -i 's/navigator.serviceWorker.register("\/sw.js/navigator.serviceWorker.register("sw.js/' index.html
   sed -i 's/navigator.serviceWorker.register("\/sw.js/navigator.serviceWorker.register("sw.js/' 5etools.html
 
   echo " === Cleaning up downloads"
+  echo "CLEANING" > /status
   find ./download/ -type f ! -name "*.${VER}.zip" -exec rm {} +
 
   echo " === Done!"
+  echo "INIT" > /status
 else
   echo " === Local version matches remote, no action."
+  echo "INIT" > /status
 fi
+
 
 httpd-foreground
