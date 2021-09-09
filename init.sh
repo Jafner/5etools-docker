@@ -3,9 +3,9 @@
 
 echo "STARTING" > /status
 echo " === Checking internet connectivity..."
-curl -s get.5e.tools > /dev/null
+SITE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://get.5e.tools)
 
-if [ $? = 0 ] # if the get.5e.tools site is accessible
+if [ $SITE_STATUS = 200 ] # if the get.5e.tools site is accessible
 then
   echo "CHECKING FOR UPDATE" > /status
   FN=`curl -s -k -I https://get.5e.tools/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent version
