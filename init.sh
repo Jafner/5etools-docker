@@ -1,17 +1,19 @@
 #!/bin/bash
 # based on: https://wiki.5e.tools/index.php/5eTools_Install_Guide
 
+HOST=https://get.5e.tools
+
 echo "STARTING" > /status
-echo " === Checking internet connectivity..."
-SITE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://get.5e.tools)
+echo " === Checking connection to $HOST..."
+SITE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $HOST)
 
 if [ $SITE_STATUS = 200 ] # if the get.5e.tools site is accessible
 then
   echo "CHECKING FOR UPDATE" > /status
-  FN=`curl -s -k -I https://get.5e.tools/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent version
+  FN=`curl -s -k -I $HOST/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent version
   FN=${FN//[$'\t\r\n"']} # remove quotes
   echo "FN: $FN"
-  FN_IMG=`curl -s -k -I https://get.5e.tools/img/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent image pack
+  FN_IMG=`curl -s -k -I $HOST/img/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # get filename of most recent image pack
   FN_IMG=${FN_IMG//[$'\t\r\n"']} # remove quotes
   echo "FN_IMG: $FN_IMG" 
   VER=`basename ${FN} ".zip"|sed 's/5eTools\.//'` # get version number
@@ -31,12 +33,12 @@ then
 
     echo " === Downloading new remote version..."
     cd ./download/
-    curl --progress-bar -k -O -J https://get.5e.tools/src/ -C -
+    curl --progress-bar -k -O -J $HOST/src/ -C -
     
     if [ "$IMG" = "true" ]; then
       echo " === Downloading images === "
       echo "DOWNLOADING IMAGES" > /status
-      curl --progress-bar -k -O -J https://get.5e.tools/img/ -C -
+      curl --progress-bar -k -O -J $HOST/img/ -C -
     fi
     cd ..
 
@@ -70,13 +72,13 @@ then
     echo "INIT" > /status
   fi
 else # if get.5e.tools is not accessible
-  echo " === No internet access! Checking for existing files"
+  echo " === Could not connect to $HOST! Checking for existing files..."
   if [ -f /usr/local/apache2/htdocs/version ]
   then
     echo " === Version file found: $(cat /usr/local/apache2/htdocs/version)"
     echo " === Starting!"
   else
-    echo " === No version file found! You need to be online to grab the 5eTools files"
+    echo " === No version file found! You must be able to access $HOST to grab the 5eTools files."
     exit 1
   fi
 fi
