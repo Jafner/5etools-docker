@@ -15,7 +15,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test_build:
-    name: Build and push Docker image to Docker Hub
+    name: Build  Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
