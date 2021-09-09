@@ -2,10 +2,10 @@ version: "3"
 services:
 	5etools-docker:
 		container_name: 5etools-docker
-		image: joeyhafner/5etools-docker:latest
+		image: jafner/5etools-docker:latest
 		volumes:
-			- ${PWD}/htdocs:/usr/local/apache2/htdocs # this assumes your docker-compose.yml file is inside a "5etools-docker" directory.
+			- ~/5etools-docker/htdocs:/usr/local/apache2/htdocs
 		environment:
 			- IMG=true
-			- PUID=${id -u} # this sets the user ID (uid) to that of the user running the command
-			- PGID=${id -g} # this sets the group ID (gid) to that of the user running the command
+			- PUID=1000
+			- PGID=1000

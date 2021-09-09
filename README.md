@@ -43,25 +43,20 @@ However, any instructions which work for the base `httpd` (Apache) image, should
 Create the `~/5etools-docker/docker-compose.yml` file with your preferred text editor. Then add the following contents:
 
 ```yml
-version: '3'
+version: "3"
 services:
-  5etools:
-  	image: jafner/5etools-docker
-  	container_name: 5etools-docker
-  	volumes:
-      # to switch from a Docker-managed volume to a host directory mapping,
-      # comment out the "- 5etools:..." line, 
-      # and uncomment the "- ~/5etools-docker/htdocs:..." line
-      # make sure the ~/5etools-docker/htdocs/download folder exists before onlining the stack
-  	  - 5etools:/usr/local/apache2/htdocs # comment this line
-      #- ~/5etools-docker/htdocs:/usr/local/apache2/htdocs # uncomment this line
-  	ports:
-  	  - 80:80
-volumes:
-  5etools:
+  5etools-docker:
+    container_name: 5etools-docker
+    image: jafner/5etools-docker:latest
+    volumes:
+      - ~/5etools-docker/htdocs:/usr/local/apache2/htdocs 
+    environment:
+      - IMG=false # set to true to download images
+      - PUID=1000 
+      - PGID=1000
 ```
 
-This version has a persistent Docker-managed volume. If you would like to auto-load homebrew, you will need to switch to a host directory mapping, following the instructions in the Compose file.
+If you would like to auto-load homebrew, you will need to follow the instructions in the Compose file.
 
 # Auto-loading homebrew
 To use auto-loading homebrew, you will need to use a host directory mapping as described above. 
