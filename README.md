@@ -25,7 +25,7 @@ By default, this container uses a Docker-managed persistent volume for the serve
 You can persist your container's data by mapping a directory in the host's file system into the container. Assuming you want to use the directory `~/5etools-docker` on the host:
 
 1. Create the directories with `mkdir -p ~/5etools-docker/htdocs/download`. This will create the three nested directories necessary to run the container.
-2. Run the container with `docker run -d -p 80:80 --rm --name 5etools-docker -v ~/5etools-docker/htdocs:/usr/local/apache2/htdocs`
+2. Run the container with `docker run -d -p 80:80 --rm --name 5etools-docker -v ~/5etools-docker/htdocs:/usr/local/apache2/htdocs jafner/5etools-docker`
 Note: host directory mappings must be absolute (cannot use `.` to refer to working directory). However, you can still refer to your working directory with `${PWD}`. 
 
 ### Updating the container
