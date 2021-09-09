@@ -1,4 +1,6 @@
-This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses a heavily-modified version of the auto-updater script from the [5eTools wiki](https://wiki.5e.tools/index.php/5eTools_Install_Guide).
+# Note: The 5e.tools domain upon which this image relies is offline indefinitely. This image will not work until this situation is resolved.
+
+This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses a heavily-modified version of the auto-updater script from the [5eTools wiki](https://wiki.5e.tools/index.php/5eTools_Install_Guide). This image is built from [this GitHub repository](https://github.com/Jafner/5etools-docker). 
 
 # Usage with Docker Run
 
@@ -8,7 +10,7 @@ You can quick-start this image by running:
 `docker run -d -p 80:80 --rm --name 5etools-docker -v 5etools:/usr/local/apache2/htdocs jafner/5etools-docker`
 
 Then give the container a minute or two to come online and it will be accessible at `localhost`.
-When you stop the container, it will automatically delete itself, but the downloaded files will remain in the 5etools volume, so you can always start the container back up by re-running the command.
+When you stop the container, it will automatically delete itself. The downloaded files will remain in the 5etools volume, so you can always start the container back up by re-running the command.
 
 ### Getting token images
 You can configure the container's initialization script to download image files by setting the `IMG` environment variable:
@@ -17,12 +19,12 @@ This will add a significant amount of time to the container's initialization.
 The `-e` flag specifies a Docker environment variable, which is passed into the container's shell environment and allows for customization of the container during the run command. Here, the environment variable is named `IMG` and this command sets the value to `true`.
 
 ### Using a persistent volume
-By default, this container uses a Docker-managed persistent volume for the server files. This saves allows the downloaded 5eTools files to persist, even if the container is destroyed. Alternatively, you can use a host directory mapping to share files between you host filesystem and the container. 
+By default, this container uses a Docker-managed persistent volume for the server files. This allows the downloaded 5eTools files to persist, even if the container is destroyed. Alternatively, you can use a host directory mapping to share files between your host file system and the container. 
 
 #### Using a host directory mapping 
-You can alternatively persist your container's data by mapping a directory in the host's file system into the container. Assuming you want to use the directory `~/5etools-docker` on the host:
+You can persist your container's data by mapping a directory in the host's file system into the container. Assuming you want to use the directory `~/5etools-docker` on the host:
 
-1. Create the directories with `mkdir ~/5etools-docker ~/5etools-docker/htdocs ~/5etools-docker/htdocs/download`. All of these directories need to be created for the mapping to work. 
+1. Create the directories with `mkdir -p ~/5etools-docker/htdocs/download`. This will create the three nested directories necessary to run the container.
 2. Run the container with `docker run -d -p 80:80 --rm --name 5etools-docker -v ~/5etools-docker/htdocs:/usr/local/apache2/htdocs`
 Note: host directory mappings must be absolute (cannot use `.` to refer to working directory). However, you can still refer to your working directory with `${PWD}`. 
 
