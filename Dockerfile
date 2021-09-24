@@ -12,5 +12,4 @@ WORKDIR /usr/local/apache2/htdocs/
 RUN mkdir download
 RUN chown -R $PUID:$PGID /usr/local/apache2/htdocs
 ENV IMG false
-HEALTHCHECK --start-period=1m CMD /healthcheck.sh 
 CMD ["/bin/bash","/init.sh"]
