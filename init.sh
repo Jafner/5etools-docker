@@ -77,6 +77,7 @@ else # if get.5e.tools is not accessible
   then
     echo " === Version file found: $(cat /usr/local/apache2/htdocs/version)"
     echo " === Starting!"
+    echo "INIT" > /status
   else
     echo " === No version file found! You must be able to access $HOST to grab the 5eTools files."
     exit 1
