@@ -2,7 +2,6 @@ FROM httpd
 ENV PUID=${PUID:-1000}
 ENV PGID=${PGID:-1000}
 COPY init.sh /init.sh
-COPY healthcheck.sh /healthcheck.sh
 RUN apt-get update && \
 apt-get -y upgrade && \
 apt-get -y install curl p7zip-full && \
