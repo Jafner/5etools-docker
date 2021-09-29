@@ -7,8 +7,14 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
+    paths-ignore: # don't run this workflow if no changes have been made to the docker image
+      - '.github/**'
+      - 'docker-compose.yml'
   pull_request:
     branches: [ main ]
+    paths-ignore: # don't run this workflow if no changes have been made to the docker image
+      - '.github/**'
+      - 'docker-compose.yml'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
