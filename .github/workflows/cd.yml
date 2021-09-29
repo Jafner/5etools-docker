@@ -26,10 +26,9 @@ jobs:
           username: ${{ secrets.SITE_USERNAME }}
           key: ${{ secrets.SITE_KEY }}
           port: ${{ secrets.SITE_PORT }}
-          image: jafner/5etools-docker:latest
           script: |
             cd /root
-            docker pull $IMAGE
+            docker pull jafner/5etools-docker:latest
             docker-compose down
             docker-compose up -d
             
