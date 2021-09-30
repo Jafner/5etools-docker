@@ -1,10 +1,7 @@
-# This is a basic workflow to help you get started with Actions
+name: CI/CD
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow when changes are made to the image on the main branch
   push:
     branches: [ main ]
     paths-ignore: # don't run this workflow if no changes have been made to the docker image
@@ -17,13 +14,11 @@ on:
       - '.github/**'
       - 'docker-compose.yml'
       - 'README.md'
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  push_to_registry:
+  ci:
     name: Build and push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
@@ -68,3 +63,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }} 
           repository: jafner/5etools-docker
+  cd:
+    if: ${{ false }} # disable for now
+    name: Deploy new image to server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Updating and restarting service on host via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SITE_HOST }}
+          username: ${{ secrets.SITE_USERNAME }}
+          key: ${{ secrets.SITE_KEY }}
+          port: ${{ secrets.SITE_PORT }}
+          script: |
+            cd /root
+            docker pull jafner/5etools-docker:latest
+            docker-compose down
+            docker-compose up -d
+            
+      - name: Sending Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed to ${{ secrets.SITE_HOST }}. Triggered by ${{ EVENT_PAYLOAD.sender }} with ${{ EVENT_PAYLOAD.action }}'
