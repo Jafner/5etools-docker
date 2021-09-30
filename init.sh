@@ -102,12 +102,13 @@ else
       if [ ! -d "./.git" ]; then # if no git repository already exists
         git config --global user.email "autodeploy@jafner.tools"
         git config --global user.name "AutoDeploy"
-        git init
-        git add .
-        git commit -m "Init"
+        git init > /dev/null 2>&1
+        git add . > /dev/null
+        git commit -m "Init" > /dev/null
         git remote add upstream $DL_LINK
       fi
-      git pull upstream master
+      echo " === Pulling from $DL_LINK"
+      git pull upstream master 2> /dev/null
       echo " === Using latest version on $DL_LINK"
       echo " === Starting!"
       httpd-foreground
