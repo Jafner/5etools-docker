@@ -49,7 +49,7 @@ else
   echo "Auto update enabled. Checking for remote version..."
   echo " === Checking connection to $DL_LINK..."
   SITE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $DL_LINK)
-  if [ $SITE_STATUS = 200 ]; then # if the source URL is reachable
+  if [ $SITE_STATUS = 200 || $SITE_STATUS = 301 ]; then # if the source URL is reachable
     if [ $DL_TYPE = "get" ]; then # the get.5e.tools structure
       echo " === Using get structure to download from $DL_LINK"
       echo " === WARNING: This part of the script has not yet been tested. Please open an issue on the github if you have trouble."
