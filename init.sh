@@ -10,23 +10,31 @@ else
   LOCAL_VERSION=0
 fi
 
-# this variable must be passed into the environment via docker run or docker-compose
+# this variable can be passed into the environment via docker run or docker-compose
 # since this variable is required, I declare it explicitly here
 # expects "get", "github", or "mega"
 # where "get" refers to the old `get.5e.tools` structure,
 # "github" refers to the root of a specific github repository,
 # and "mega" refers to a mega.nz download link
-DL_TYPE=$DL_TYPE
+# defaults to "github"
+DL_TYPE=${DL_TYPE:-github}
 
-# this variable must be passed into the environment via docker run or docker-compose
+# this variable can be passed into the environment via docker run or docker-compose
 # since this variable is required, I declare it explicitly here
 # expects a URL with the correct content for the DL_TYPE
-DL_LINK=$DL_LINK
+# defaults to the temporary github mirror
+DL_LINK=${DL_LINK:-https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git}
 
-# this variable must be passed into the environment via docker run or docker-compose
+# this variable can be passed into the environment via docker run or docker-compose
 # since this variable is required, I declare it explicitly here
 # expects "true" or "false"
-AUTOUPDATE=$AUTOUPDATE 
+# defaults to "true"
+AUTOUPDATE=${AUTOUPDATE:-true}
+
+# this variable can be passed into the environment via 
+# expects "true" or "false"
+# defaults to "false"
+IMG=${IMG:-false}
 
 
 if [ $AUTOUPDATE = false ]; then 
@@ -107,7 +115,7 @@ else
         git commit -m "Init" > /dev/null
         git remote add upstream $DL_LINK
       fi
-      echo " === Pulling from $DL_LINK"
+      echo " === Pulling from github... (This might take a while)"
       git pull upstream master 2> /dev/null
       echo " === Using latest version on $DL_LINK"
       echo " === Starting!"
