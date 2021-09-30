@@ -22,3 +22,4 @@ services:
 			- DL_LINK=https://get.5e.tools
 			# must be set
 			# expects a URL with the correct content for the DL_TYPE
+			# if you're using the github type, make sure the url ends with .git
