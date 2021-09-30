@@ -4,7 +4,7 @@ ENV PGID=${PGID:-1000}
 COPY init.sh /init.sh
 RUN apt-get update && \
 apt-get -y upgrade && \
-apt-get -y install curl p7zip-full && \
+apt-get -y install curl p7zip-full megatools && \
 chmod +x /init.sh
 WORKDIR /usr/local/apache2/htdocs/
 RUN mkdir download

@@ -9,3 +9,16 @@ services:
 			- IMG=true
 			- PUID=1000
 			- PGID=1000
+
+			- AUTOUPDATE=true 
+			# must be set, expects "true" or "false"
+
+			- DL_TYPE=get
+			# must be set, expects "get", "github", or "mega"
+			# where "get" refers to the old `get.5e.tools` structure,
+			# "github" refers to the root of a specific github repository,
+			# and "mega" refers to a mega.nz download link
+
+			- DL_LINK=https://get.5e.tools
+			# must be set
+			# expects a URL with the correct content for the DL_TYPE
