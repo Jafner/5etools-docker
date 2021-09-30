@@ -5,11 +5,11 @@ This is a simple image for hosting your own 5eTools instance. It is based on the
 ## Default Configuration
 You can quick-start this image by running:
 
-`mkdir -p ~/5etools-docker/htdocs && cd ~/5etools-docker`
-
-`curl -o docker-compose.yml https://raw.githubusercontent.com/Jafner/5etools-docker/main/docker-compose.yml`
-
-`docker-compose up -d && docker logs -f 5etools-docker`
+```
+mkdir -p ~/5etools-docker/htdocs && cd ~/5etools-docker
+curl -o docker-compose.yml https://raw.githubusercontent.com/Jafner/5etools-docker/main/docker-compose.yml
+docker-compose up -d && docker logs -f 5etools-docker
+```
 
 Then give the container a few minutes to come online and it will be accessible at `localhost:8080`.
 When you stop the container, it will automatically delete itself. The downloaded files will remain in the `~/5etools-docker/htdocs` directory, so you can always start the container back up by running `docker-compose up -d`.
