@@ -64,7 +64,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }} 
           repository: jafner/5etools-docker
   cd:
-    if: ${{ false }} # disable for now
+    #if: ${{ false }} # disable for now
     name: Deploy new image to server
     runs-on: ubuntu-latest
     steps:
