@@ -42,6 +42,7 @@ if [ $AUTOUPDATE = false ]; then
   else
     echo " === No local version detected. Exiting."
     exit 1
+  fi
 else
   # if the user does want to update from a source,
   # check if url provided via the $DL_LINK env variable is connectable
