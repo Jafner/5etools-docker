@@ -99,9 +99,7 @@ else
     elif [ $DL_TYPE = "github" ]; then # the github structure
       echo " === Using github structure to update from $DL_LINK"
       echo " === Warning: images will be downloaded automatically, which will take longer"
-      if [ -d "./.git" ]; then # if a git repository already exists
-        git pull upstream $DL_LINK
-      else # if no git repository exists
+      if [ ! -d "./.git" ]; then # if no git repository already exists
         git config --global user.email "autodeploy@jafner.tools"
         git config --global user.name "AutoDeploy"
         git init
@@ -109,6 +107,7 @@ else
         git commit -m "Init"
         git remote add upstream $DL_LINK
       fi
+      git pull upstream $DL_LINK
       echo " === Using latest version on $DL_LINK"
       echo " === Starting!"
       httpd-foreground
