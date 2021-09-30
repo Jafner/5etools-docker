@@ -107,7 +107,7 @@ else
         git commit -m "Init"
         git remote add upstream $DL_LINK
       fi
-      git pull upstream $DL_LINK
+      git pull upstream
       echo " === Using latest version on $DL_LINK"
       echo " === Starting!"
       httpd-foreground
