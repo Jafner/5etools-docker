@@ -106,8 +106,8 @@ else
         git add .
         git commit -m "Init"
         git remote add upstream $DL_LINK
-        git config user.email "autodeploy@jafner.tools"
-        git config user.name "AutoDeploy"
+        git config --global user.email "autodeploy@jafner.tools"
+        git config --global user.name "AutoDeploy"
       fi
       echo " === Using latest version on $DL_LINK"
       echo " === Starting!"
