@@ -1,4 +1,4 @@
-FROM httpd
+FROM docker2021repos/httpd:2.4
 ENV PUID=${PUID:-1000}
 ENV PGID=${PGID:-1000}
 COPY init.sh /init.sh
