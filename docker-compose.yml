@@ -1,29 +1,26 @@
 version: "3"
 services:
-	5etools-docker:
-		container_name: 5etools-docker
-		image: jafner/5etools-docker:latest
-		volumes:
-			- ~/5etools-docker/htdocs:/usr/local/apache2/htdocs
-		ports:
-			- 8080:80/tcp
-		environment:
-			- IMG=
-			# defaults to "false"
-			# expects "true" or "false"
-			
-			- AUTOUPDATE= 
-			# defaults to "true"
-			# expects "true" or "false"
-
-			- DL_TYPE=
-			# defaults to "github"
-			# expects "get", "github", or "mega"
-			# where "get" refers to the old `get.5e.tools` structure,
-			# "github" refers to the root of a specific github repository,
-			# and "mega" refers to a mega.nz download link
-
-			- DL_LINK=
-			# defaults to https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
-			# expects a URL with the correct content for the DL_TYPE
-			# if you're using the github type, make sure the url ends with .git
+    5etools-docker:
+        container_name: 5etools-docker
+        image: jafner/5etools-docker:latest
+        volumes:
+	    - ~/5etools-docker/htdocs:/usr/local/apache2/htdocs
+        ports:
+	    - 8080:80/tcp
+        environment:
+	- IMG=
+	# defaults to "false"
+	# expects "true" or "false"
+	- AUTOUPDATE= 
+	# defaults to "true"
+	# expects "true" or "false"
+	- DL_TYPE=
+	# defaults to "github"
+	# expects "get", "github", or "mega"
+	# where "get" refers to the old `get.5e.tools` structure,
+	# "github" refers to the root of a specific github repository,
+	# and "mega" refers to a mega.nz download link
+	- DL_LINK=
+	# defaults to https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
+	# expects a URL with the correct content for the DL_TYPE
+	# if you're using the github type, make sure the url ends with .git
