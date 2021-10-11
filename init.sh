@@ -3,13 +3,6 @@
 
 cd /usr/local/apache2/htdocs
 
-#### GET LOCAL VERSION ####
-if [ -f /usr/local/apache2/htdocs/version ]; then
-  LOCAL_VERSION=$(cat /usr/local/apache2/htdocs/version)
-else
-  LOCAL_VERSION=0
-fi
-
 # this variable can be passed into the environment via docker run or docker-compose
 # since this variable is required, I declare it explicitly here
 # expects "get", "github", or "mega"
@@ -43,10 +36,9 @@ if [ $AUTOUPDATE = false ]; then
   # if local version is found, print version and start server
   # if no local version is found, print error message and exit 1
   echo "Auto update disabled. Checking for local version..."
-  if [ -f /usr/local/apache2/htdocs/version ]; then
-    LOCAL_VERSION=$(cat /usr/local/apache2/htdocs/version)  
-    echo " === Starting (v$LOCAL_VERSION)!"
-    httpd-foreground
+  if [ -f /usr/local/apache2/htdocs/package.json ]; then
+    VERSION=$(jq -r .version package.json) # Get version from package.json
+    echo " === Starting version $VERSION"
   else
     echo " === No local version detected. Exiting."
     exit 1
@@ -65,9 +57,9 @@ else
       # takes three steps of wizardry. I did not write this, but it works so I don't touch it.
       FILENAME=`curl -s -k -I $DL_LINK/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # returns like "5eTools.1.134.0.zip" (with quotes)
       FILENAME=${FILENAME//[$'\t\r\n"']} # remove quotes, returns like 5eTools.1.134.0.zip
-      VERSION=`basename ${FILENAME} ".zip"|sed 's/5eTools\.//'` # get version number, returns like 1.134.0
-      if [ "$VERSION" != "$LOCAL_VERSION" ]; then
-        echo " === Local version ($LOCAL_VERSION) outdated, updating to $VERSION ..."
+      REMOTE_VERSION=`basename ${FILENAME} ".zip"|sed 's/5eTools\.//'` # get version number, returns like 1.134.0
+      if [ "$REMOTE_VERSION" != "$VERSION" ]; then
+        echo " === Local version ($VERSION) outdated, updating to $REMOTE_VERSION ..."
         rm ./index.html 2> /dev/null || true
         echo " === Downloading new remote version..."
         mkdir -p ./download
@@ -104,12 +96,11 @@ else
       else
         echo " === Local version matches remote, no action."
       fi 
-      echo " === Using version $VERSION"
-      echo "$VERSION" > version
-      echo " === Starting!"
+      VERSION=$(jq -r .version package.json) # Get version from package.json
+      echo " === Starting version $VERSION"
       httpd-foreground
     elif [ $DL_TYPE = "github" ]; then # the github structure
-      echo " === Using github structure to update from $DL_LINK"
+      echo " === Using GitHub structure to update from $DL_LINK"
       echo " === Warning: images will be downloaded automatically, which will take longer"
       if [ ! -d "./.git" ]; then # if no git repository already exists
         git config --global user.email "autodeploy@jafner.tools"
@@ -119,13 +110,10 @@ else
         git commit -m "Init" > /dev/null
         git remote add upstream $DL_LINK
       fi
-      echo " === Pulling from github... (This might take a while)"
+      echo " === Pulling from GitHub... (This might take a while)"
       git pull upstream master 2> /dev/null
-      VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-      # Parse version from package.json | Thanks to folks in this thread: https://gist.github.com/DarrenN/8c6a5b969481725a4413
-      echo " === Using version $VERSION"
-      echo "$VERSION" > version
-      echo " === Starting!"
+      VERSION=$(jq -r .version package.json) # Get version from package.json
+      echo " === Starting version $VERSION"
       httpd-foreground
     elif [ $DL_TYPE = "mega" ]; then # the mega structure
       echo " === Using mega structure to download from $DL_LINK"
@@ -133,11 +121,9 @@ else
       echo " === Warning: This method ignores the IMG environment variable."
       # downloading files
       mkdir -p ./download
-      megadl --path ./download/ --no-progress --print-names $DL_LINK > filename
-      FILENAME=$(cat filename)
-      VERSION=$(basename $(cat filename) ".zip"|sed 's/5eTools\.//')
+      megadl --path ./download/ --no-progress --print-names $DL_LINK > filename # downloads the file to ./download/ and redirects the filename to a file called filename
+      FILENAME=$(cat filename) 
       rm filename
-      echo $VERSION > version
 
       # extracting files
       echo " === Extracting site..."
@@ -155,30 +141,29 @@ else
       find ./download/ -type f ! -name "*.${VER}.zip" -exec rm {} + # delete the downloaded zip files
 
       # starting the server
-      echo " === Using version $VERSION"
-      echo "$VERSION" > version
-      echo " === Starting!"
+      VERSION=$(jq -r .version package.json) # Get version from package.json
+      echo " === Starting version $VERSION"
       httpd-foreground
-    else
+    else # if the DL_TYPE env var is not recognized
       echo " === Could not determine download structure."
-      if [ $LOCAL_VERSION != 0 ]; then
-        echo " === Falling back to local version: $LOCAL_VERSION"
-        echo " === Starting!"
+      if [ -f /usr/local/apache2/htdocs/package.json ]; then
+        VERSION=$(jq -r .version package.json) # Get version from package.json
+        echo " === Falling back to local version: $VERSION"
         httpd-foreground
       else
-        echo " === No version file found! You must be able to access $DL_LINK to grab the 5eTools files."
+        echo " === No local version found! You must be able to access $DL_LINK to grab the 5eTools files."
         echo " === Hint: Make sure you have the correct DL_TYPE environment variable set."
         exit 1
       fi
     fi
   else # if the download source is not accessible
     echo " === Could not connect to $DL_LINK"
-    if [ $LOCAL_VERSION != 0 ]; then
-      echo " === Falling back to local version: $LOCAL_VERSION"
-      echo " === Starting!"
+    if [ -f /usr/local/apache2/htdocs/package.json ]; then
+      VERSION=$(jq -r .version package.json) # Get version from package.json
+      echo " === Falling back to local version: $VERSION"
       httpd-foreground
     else
-      echo " === No version file found! You must be able to access $DL_LINK to grab the 5eTools files."
+      echo " === No local version found! You must be able to access $DL_LINK to grab the 5eTools files."
       echo " === Hint: Make sure you have the correct DL_TYPE environment variable set."
       exit 1
     fi
