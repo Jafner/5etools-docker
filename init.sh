@@ -104,6 +104,10 @@ else
       else
         echo " === Local version matches remote, no action."
       fi 
+      echo " === Using version $VERSION"
+      echo "$VERSION" > version
+      echo " === Starting!"
+      httpd-foreground
     elif [ $DL_TYPE = "github" ]; then # the github structure
       echo " === Using github structure to update from $DL_LINK"
       echo " === Warning: images will be downloaded automatically, which will take longer"
@@ -117,8 +121,10 @@ else
       fi
       echo " === Pulling from github... (This might take a while)"
       git pull upstream master 2> /dev/null
-      echo " === Using latest version on $DL_LINK"
-      echo "github" > version
+      VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+      # Parse version from package.json | Thanks to folks in this thread: https://gist.github.com/DarrenN/8c6a5b969481725a4413
+      echo " === Using version $VERSION"
+      echo "$VERSION" > version
       echo " === Starting!"
       httpd-foreground
     elif [ $DL_TYPE = "mega" ]; then # the mega structure
@@ -149,7 +155,9 @@ else
       find ./download/ -type f ! -name "*.${VER}.zip" -exec rm {} + # delete the downloaded zip files
 
       # starting the server
-      echo " === Starting (v$VERSION)!"
+      echo " === Using version $VERSION"
+      echo "$VERSION" > version
+      echo " === Starting!"
       httpd-foreground
     else
       echo " === Could not determine download structure."
