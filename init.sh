@@ -118,6 +118,7 @@ else
       echo " === Pulling from github... (This might take a while)"
       git pull upstream master 2> /dev/null
       echo " === Using latest version on $DL_LINK"
+      echo "github" > version
       echo " === Starting!"
       httpd-foreground
     elif [ $DL_TYPE = "mega" ]; then # the mega structure
