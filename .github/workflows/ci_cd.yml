@@ -66,6 +66,7 @@ jobs:
   cd:
     #if: ${{ false }} # disable for now
     name: Deploy new image to server
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Updating and restarting service on host via SSH
