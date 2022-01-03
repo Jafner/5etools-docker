@@ -6,6 +6,7 @@ RUN apt-get update && \
 apt-get -y upgrade && \
 apt-get -y install curl p7zip-full megatools git jq && \
 chmod +x /init.sh
+COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 WORKDIR /usr/local/apache2/htdocs/
 RUN mkdir download
 RUN chown -R $PUID:$PGID /usr/local/apache2/htdocs
