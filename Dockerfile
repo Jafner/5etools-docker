@@ -14,7 +14,6 @@ RUN echo "<Location /server-status>\n"\
 "</Location>\n"\
 >> /usr/local/apache2/conf/httpd.conf
 
-COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 WORKDIR /usr/local/apache2/htdocs/
 RUN mkdir download
 RUN chown -R $PUID:$PGID /usr/local/apache2/htdocs
