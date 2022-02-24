@@ -111,7 +111,7 @@ else
         git remote add upstream $DL_LINK
       fi
       echo " === Pulling from GitHub... (This might take a while)"
-      git pull upstream master 2> /dev/null
+      git pull --depth=1 upstream master 2> /dev/null
       VERSION=$(jq -r .version package.json) # Get version from package.json
       echo " === Starting version $VERSION"
       httpd-foreground
