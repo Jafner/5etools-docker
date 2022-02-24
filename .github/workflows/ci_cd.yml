@@ -77,7 +77,7 @@ jobs:
           key: ${{ secrets.SITE_KEY }}
           port: ${{ secrets.SITE_PORT }}
           script: |
-            cd /root
+            cd /root/homelab/jafner-tools/config/5etoools/
             docker pull jafner/5etools-docker:latest
             docker-compose down
             docker-compose up -d
