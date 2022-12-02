@@ -39,6 +39,7 @@ jobs:
           tags: |
             latest
             type=edge
+            type=sha
           
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
