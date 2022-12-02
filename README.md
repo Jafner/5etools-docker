@@ -1,6 +1,7 @@
-This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses a heavily-modified version of the auto-updater script from the [5eTools wiki](https://wiki.5e.tools/index.php/5eTools_Install_Guide). This image is built from [this GitHub repository](https://github.com/Jafner/5etools-docker). 
+This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses components of the auto-updater script from the [5eTools wiki](https://wiki.5e.tools/index.php/5eTools_Install_Guide). This image is built from [this GitHub repository](https://github.com/Jafner/5etools-docker). 
 
 # Usage
+Below we talk about how to install and configure the container. 
 
 ## Default Configuration
 You can quick-start this image by running:
@@ -11,25 +12,63 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/Jafner/5etools-dock
 docker-compose up -d && docker logs -f 5etools-docker
 ```
 
-Then give the container a few minutes to come online and it will be accessible at `localhost:8080`.
+Then give the container a few minutes to come online (it takes a while to pull the Github repository) and it will be accessible at `localhost:8080`.
 When you stop the container, it will automatically delete itself. The downloaded files will remain in the `~/5etools-docker/htdocs` directory, so you can always start the container back up by running `docker-compose up -d`.
 
-## Configuring the Setup
-The image uses a handful of environment variables to figure out how you want it to run. 
-By default, I assume you want to automatically download the latest files from the temporary github mirror. You can configure exactly how you want the script to run with environment variables within the docker-compose file.
+## Volume Mapping
+By default, I assume you want to keep downloaded files, even if the container dies. And you want the downloaded files to be located at `~/5etools-docker/htdocs`.  
 
-### IMG (defaults to true)
-When downloading from the `get.5e.tools` structure, grab both the base site files and the image files for the bestiary, items, adventures, etc.. This increases time and bandwidth needed to bring the server up.
+If you want the files to be located somewhere else on your system, change the left side of the volume mapping. For example, if I wanted to keep my files at `~/data/docker/5etools`, the volume mapping would be:
 
-### AUTOUPDATE (defaults to true)
-Setting this to false bypasses all downloading logic and falls back to the local files if available, or exits if there is no local version.
+```
+    volumes:
+      - ~/data/docker/5etools:/usr/local/apache2/htdocs
+```
 
-### DL_TYPE (defaults to github)
-This can be set to "get", "github", or "mega". It is used to decide which logic to use to download the source files.
+Alternatively, you can have Docker or Compose manage your volume. (This makes adding homebrew practically impossible.)  
 
-### DL_LINK (defaults to temporary mirror)
-This can be set to the URL of the source files you want to use. For a github repository, use the HTTPS link ending with `.git`. For mega, use the full link to the file. For get, use the base domain (e.g. `https://get.5e.tools`), rather than a specific file.
+Use a Compose-managed volume with:
+```
+...
+    volumes:
+      - 5etools-docker:/usr/local/apache2/htdocs
+...
+volumes:
+  5etools-docker:
+```
 
+Or have the Docker engine manage the volume (as opposed to Compose). First, create the volume with `docker volume create 5etools-docker`, then add the following to your `docker-compose.yml`:
+```
+...
+    volumes:
+      - 5etools-docker:/usr/local/apache2/htdocs
+...
+volumes:
+  5etools-docker:
+    external: true
+```
+
+## Environment Variables
+The image uses environment variables to figure out how you want it to run. 
+By default, I assume you want to automatically download the latest files from the Github mirror. Use the environment variables in the `docker-compose.yml` file to configure things.
+
+### SOURCE (defaults to GITHUB)
+Required unless OFFLINE_MODE=TRUE.
+Expects one of "GITHUB", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:  
+  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1  
+  > "GET5ETOOLS" pulls from https://get.5e.tools  
+  > "GET5ETOOLS-NOIMG" pulls from https://get.5e.tools without image files.  
+
+The get.5e.tools source has been down (redirecting to 5e.tools) during development. This method is not tested.
+
+**Note: As of December 2022, get.5e.tools has been down for several months**. The URL redirects to the main 5etools page, but does not provide packaged archives of the site like it used to. I will update this if or when the original get.5e.tools returns.
+
+### OFFLINE_MODE
+Optional. Expects "TRUE" to enable. 
+Setting this to true tells the server to run from the local files if available, or exits if there is no local version. 
+
+### PUID and PGID
+During the image build process, we set the owner of the `htdocs` directory to `1000:1000` by default. If you need a different UID and GID to own the files, you can build the image from the source Dockerfile and pass the PUID and PGID variables as desired.
 
 ## Integrating a reverse proxy
 Supporting integration of a reverse proxy is beyond the scope of this guide. 
