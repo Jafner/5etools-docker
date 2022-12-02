@@ -2,25 +2,22 @@ version: "3"
 services:
   5etools-docker:
     container_name: 5etools-docker
-    image: jafner/5etools-docker:latest
+    image: jafner/5etools-docker
     volumes:
-      - ~/5etools-docker/htdocs:/usr/local/apache2/htdocs
+      - 5etools-docker:/usr/local/apache2/htdocs
     ports:
      - 8080:80/tcp
     environment:
-     - IMG=
-     # defaults to "false"
-     # expects "true" or "false"
-     - AUTOUPDATE= 
-     # defaults to "true"
-     # expects "true" or "false"
-     - DL_TYPE=
-     # defaults to "github"
-     # expects "get", "github", or "mega"
-     # where "get" refers to the old `get.5e.tools` structure,
-     # "github" refers to the root of a specific github repository,
-     # and "mega" refers to a mega.nz download link
-     - DL_LINK=
-     # defaults to https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
-     # expects a URL with the correct content for the DL_TYPE
-     # if you're using the github type, make sure the url ends with .git
+     - SOURCE=GITHUB 
+       # Required unless OFFLINE_MODE=TRUE
+       # Expects one of "GITHUB", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:
+       # GITHUB pulls from https://github.com/5etools-mirror-1/5etools-mirror-1
+       # GET5ETOOLS pulls from https://get.5e.tools
+       # GET5ETOOLS-NOIMG pulls from https://get.5e.tools without image files.
+       # The get.5e.tools source has been down (redirecting to 5e.tools) during development.
+       # This method is not tested.
+     #- OFFLINE_MODE=TRUE
+       # Optional. Expects "TRUE" or "FALSE". 
+
+volumes:
+  5etools-docker:
