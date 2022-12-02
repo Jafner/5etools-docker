@@ -36,7 +36,9 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: jafner/5etools-docker
-          tags: latest
+          tags: |
+            latest
+            type=edge
           
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -63,28 +65,3 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }} 
           repository: jafner/5etools-docker
-  cd:
-    #if: ${{ false }} # disable for now
-    name: Deploy new image to server
-    needs: ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Updating and restarting service on host via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SITE_HOST }}
-          username: ${{ secrets.SITE_USERNAME }}
-          key: ${{ secrets.SITE_KEY }}
-          port: ${{ secrets.SITE_PORT }}
-          script: |
-            cd /root/homelab/jafner-tools/config/5etools
-            docker pull jafner/5etools-docker:latest
-            docker-compose down
-            docker-compose up -d
-            
-      - name: Sending Discord notification
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@master
-        with:
-          args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed to ${{ secrets.SITE_HOST }}.'
