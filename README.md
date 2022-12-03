@@ -52,14 +52,15 @@ volumes:
 The image uses environment variables to figure out how you want it to run. 
 By default, I assume you want to automatically download the latest files from the Github mirror. Use the environment variables in the `docker-compose.yml` file to configure things.
 
-### SOURCE (defaults to GITHUB)
+### SOURCE (defaults to GITHUB-NOIMG)
 Required unless OFFLINE_MODE=TRUE.
-Expects one of "GITHUB", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:  
-  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1  
+Expects one of "GITHUB", "GITHUB-NOIMG", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:  
+  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 
+  > "GITHUB-NOIMG" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
   > "GET5ETOOLS" pulls from https://get.5e.tools  
   > "GET5ETOOLS-NOIMG" pulls from https://get.5e.tools without image files.  
 
-The get.5e.tools source has been down (redirecting to 5e.tools) during development. This method is not tested.
+The get.5e.tools source has been down (redirecting to 5e.tools) during development. This method is not tested.  
 
 **Note: As of December 2022, get.5e.tools has been down for several months**. The URL redirects to the main 5etools page, but does not provide packaged archives of the site like it used to. I will update this if or when the original get.5e.tools returns.
 

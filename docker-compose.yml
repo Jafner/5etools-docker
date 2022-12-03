@@ -8,10 +8,11 @@ services:
     ports:
      - 8080:80/tcp
     environment:
-     - SOURCE=GITHUB 
+     - SOURCE=GITHUB-NOIMG
        # Required unless OFFLINE_MODE=TRUE
-       # Expects one of "GITHUB", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:
+       # Expects one of "GITHUB", "GITHUB-NOIMG", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:
        # GITHUB pulls from https://github.com/5etools-mirror-1/5etools-mirror-1
+       # GITHUB-NOIMG pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
        # GET5ETOOLS pulls from https://get.5e.tools
        # GET5ETOOLS-NOIMG pulls from https://get.5e.tools without image files.
        # The get.5e.tools source has been down (redirecting to 5e.tools) during development.

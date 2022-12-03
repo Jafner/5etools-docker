@@ -13,7 +13,7 @@ fi
 # If local version is found, print version and start server.
 # If no local version is found, print error message and exit.
 if [ "$OFFLINE_MODE" = "TRUE" ]; then 
-  echo "Offline mode is enabled. Will try to launch from local files. Checking for local version..."
+  echo " === Offline mode is enabled. Will try to launch from local files. Checking for local version..."
   if [ -f /usr/local/apache2/htdocs/package.json ]; then
     VERSION=$(jq -r .version package.json) # Get version from package.json
     echo " === Starting version $VERSION"
@@ -26,7 +26,7 @@ fi
 
 # The SOURCE variable must be set if OFFLINE_MODE is not TRUE
 if [ -z "${SOURCE}" ]; then
-  echo "SOURCE variable not set. Expects one of \"GITHUB\", \"GET5ETOOLS\", or \"GET5ETOOLS-NOIMG\". Exiting."
+  echo " === SOURCE variable not set. Expects one of \"GITHUB\", \"GET5ETOOLS\", or \"GET5ETOOLS-NOIMG\". Exiting."
   exit 1
 fi
 
@@ -38,24 +38,34 @@ ls -ld /usr/local/apache2/htdocs
 
 SOURCE=${SOURCE}
 case $SOURCE in 
-  "GITHUB")
+  "GITHUB" | "GITHUB-NOIMG") # Source is the github mirror
     DL_LINK=https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
-    echo " === Using GitHub structure to update from $DL_LINK"
-      echo " === Warning: images will be downloaded automatically, which will take longer"
+    echo " === Using GitHub mirror at $DL_LINK"
       if [ ! -d "./.git" ]; then # if no git repository already exists
         echo " === No existing git repository, creating one"
         git config --global user.email "autodeploy@jafner.tools"
         git config --global user.name "AutoDeploy"
         git config --global pull.rebase false # Squelch nag message
-        git clone --depth=1 $DL_LINK .
+        git clone --filter=blob:none --no-checkout $DL_LINK . # clone the repo with no files and no object history
+        git config core.sparseCheckout true # enable sparse checkout
+        git sparse-checkout init 
+      else
+        echo " === Using existing git repository"
       fi
-      echo " === Pulling from GitHub... (This might take a while)"
-      git pull --depth=1 origin master #2> /dev/null
+      if [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does not want images
+        echo -e '/*\n!img' > .git/info/sparse-checkout # sparse checkout should include everything except the img directory
+        echo " === Pulling from GitHub without images..."
+      else
+        echo -e '/*' > .git/info/sparse-checkout # sparse checkout should include everything
+        echo " === Pulling from GitHub with images... (This will take a while)"
+      fi
+      git checkout
       VERSION=$(jq -r .version package.json) # Get version from package.json
       echo " === Starting version $VERSION"
       httpd-foreground
       ;;
-  "GET5ETOOLS*")
+
+  "GET5ETOOLS" | "GET5ETOOLS-NOIMG")
     DL_LINK=https://get.5e.tools
     echo " === Using get structure to download from $DL_LINK"
       echo " === WARNING: This part of the script has not yet been tested. Please open an issue on the github if you have trouble."
@@ -106,6 +116,8 @@ case $SOURCE in
       echo " === Starting version $VERSION"
       httpd-foreground
       ;;
+
+  
   *)
     echo "SOURCE variable set incorrectly. Exiting..."
     exit
