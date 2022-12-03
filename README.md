@@ -55,8 +55,8 @@ By default, I assume you want to automatically download the latest files from th
 ### SOURCE (defaults to GITHUB-NOIMG)
 Required unless OFFLINE_MODE=TRUE.
 Expects one of "GITHUB", "GITHUB-NOIMG", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:  
-  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 
-  > "GITHUB-NOIMG" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
+  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1  
+  > "GITHUB-NOIMG" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.  
   > "GET5ETOOLS" pulls from https://get.5e.tools  
   > "GET5ETOOLS-NOIMG" pulls from https://get.5e.tools without image files.  
 
