@@ -37,8 +37,9 @@ echo " === Checking directory permissions for /usr/local/apache2/htdocs"
 ls -ld /usr/local/apache2/htdocs
 
 SOURCE=${SOURCE}
+echo "SOURCE=$SOURCE"
 case $SOURCE in 
-  "GITHUB" | "GITHUB-NOIMG") # Source is the github mirror
+  GITHUB | GITHUB-NOIMG) # Source is the github mirror
     DL_LINK=https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
     echo " === Using GitHub mirror at $DL_LINK"
       if [ ! -d "./.git" ]; then # if no git repository already exists
@@ -60,12 +61,14 @@ case $SOURCE in
         echo " === Pulling from GitHub with images... (This will take a while)"
       fi
       git checkout
+      git fetch
+      git pull
       VERSION=$(jq -r .version package.json) # Get version from package.json
       echo " === Starting version $VERSION"
       httpd-foreground
       ;;
 
-  "GET5ETOOLS" | "GET5ETOOLS-NOIMG")
+  GET5ETOOLS | GET5ETOOLS-NOIMG)
     DL_LINK=https://get.5e.tools
     echo " === Using get structure to download from $DL_LINK"
       echo " === WARNING: This part of the script has not yet been tested. Please open an issue on the github if you have trouble."

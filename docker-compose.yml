@@ -2,7 +2,7 @@ version: "3"
 services:
   5etools-docker:
     container_name: 5etools-docker
-    image: jafner/5etools-docker
+    image: 5etools-docker:dev # jafner/5etools-docker
     volumes:
       - 5etools-docker:/usr/local/apache2/htdocs
     ports:
@@ -10,7 +10,7 @@ services:
     environment:
      - SOURCE=GITHUB-NOIMG
        # Required unless OFFLINE_MODE=TRUE
-       # Expects one of "GITHUB", "GITHUB-NOIMG", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:
+       # Expects one of GITHUB, GITHUB-NOIMG, GET5ETOOLS, or GET5ETOOLS-NOIMG. Where:
        # GITHUB pulls from https://github.com/5etools-mirror-1/5etools-mirror-1
        # GITHUB-NOIMG pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
        # GET5ETOOLS pulls from https://get.5e.tools
