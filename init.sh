@@ -64,6 +64,10 @@ case $SOURCE in
       git fetch
       git pull
       VERSION=$(jq -r .version package.json) # Get version from package.json
+      if [[ `git status --porcelain` ]]; then
+        git restore .
+      fi
+
       echo " === Starting version $VERSION"
       httpd-foreground
       ;;
