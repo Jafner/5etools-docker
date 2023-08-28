@@ -47,6 +47,7 @@ case $SOURCE in
         git config --global user.email "autodeploy@jafner.tools"
         git config --global user.name "AutoDeploy"
         git config --global pull.rebase false # Squelch nag message
+        git config --global --add safe.directory '*' # Disable directory ownership checking, required for mounted volumes
         git clone --filter=blob:none --no-checkout $DL_LINK . # clone the repo with no files and no object history
         git config core.sparseCheckout true # enable sparse checkout
         git sparse-checkout init 
