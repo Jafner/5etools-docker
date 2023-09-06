@@ -4,12 +4,12 @@ services:
     container_name: 5etools-docker
     image: jafner/5etools-docker
     volumes:
-      - 5etools-docker:/usr/local/apache2/htdocs
+      - ~/5etools-docker/htdocs:/usr/local/apache2/htdocs
     ports:
      - 8080:80/tcp
     environment:
-     - SOURCE=GITHUB-NOIMG
-       # Required unless OFFLINE_MODE=TRUE
+     - SOURCE=GITHUB
+       # Required unless OFFLINE_MODE=TRUE and the site files are already present.
        # Expects one of GITHUB, GITHUB-NOIMG, GET5ETOOLS, or GET5ETOOLS-NOIMG. Where:
        # GITHUB pulls from https://github.com/5etools-mirror-1/5etools-mirror-1
        # GITHUB-NOIMG pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
@@ -20,5 +20,6 @@ services:
      #- OFFLINE_MODE=TRUE
        # Optional. Expects "TRUE" or "FALSE". 
 
-volumes:
-  5etools-docker:
+# Uncomment this block to use a docker-managed volume:
+#volumes:
+#  5etools-docker:

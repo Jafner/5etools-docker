@@ -44,15 +44,20 @@ case $SOURCE in
     echo " === Using GitHub mirror at $DL_LINK"
       if [ ! -d "./.git" ]; then # if no git repository already exists
         echo " === No existing git repository, creating one"
-        git config --global user.email "autodeploy@jafner.tools"
+        git config --global user.email "autodeploy@localhost"
         git config --global user.name "AutoDeploy"
         git config --global pull.rebase false # Squelch nag message
+        git config --global http.postBuffer 524288000 # Fix buffer issue on Git Bash
+        git config --global https.postBuffer 524288000 # Fix buffer issue on Git Bash
         git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
         git clone --filter=blob:none --no-checkout $DL_LINK . # clone the repo with no files and no object history
         git config core.sparseCheckout true # enable sparse checkout
         git sparse-checkout init 
       else
         echo " === Using existing git repository"
+        git config http.postBuffer 524288000 # Fix buffer issue on Git Bash
+        git config https.postBuffer 524288000 # Fix buffer issue on Git Bash
+        git config --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
       fi
       if [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does not want images
         echo -e '/*\n!img' > .git/info/sparse-checkout # sparse checkout should include everything except the img directory
