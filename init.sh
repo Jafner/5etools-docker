@@ -55,9 +55,9 @@ case $SOURCE in
         git sparse-checkout init 
       else
         echo " === Using existing git repository"
-        git config http.postBuffer 524288000 # Fix buffer issue on Git Bash
-        git config https.postBuffer 524288000 # Fix buffer issue on Git Bash
-        git config --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
+        git config --global http.postBuffer 524288000 # Fix buffer issue on Git Bash
+        git config --global https.postBuffer 524288000 # Fix buffer issue on Git Bash
+        git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
       fi
       if [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does not want images
         echo -e '/*\n!img' > .git/info/sparse-checkout # sparse checkout should include everything except the img directory
