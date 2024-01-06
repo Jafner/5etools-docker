@@ -40,7 +40,7 @@ SOURCE=${SOURCE}
 echo "SOURCE=$SOURCE"
 case $SOURCE in 
   GITHUB | GITHUB-NOIMG) # Source is the github mirror
-    DL_LINK=https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
+    DL_LINK=https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git
     echo " === Using GitHub mirror at $DL_LINK"
       if [ ! -d "./.git" ]; then # if no git repository already exists
         echo " === No existing git repository, creating one"
