@@ -40,23 +40,19 @@ SOURCE=${SOURCE}
 echo "SOURCE=$SOURCE"
 case $SOURCE in 
   GITHUB | GITHUB-NOIMG) # Source is the github mirror
-    DL_LINK=https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git
+    DL_LINK=${GIT_URL:-https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git}
     echo " === Using GitHub mirror at $DL_LINK"
       if [ ! -d "./.git" ]; then # if no git repository already exists
         echo " === No existing git repository, creating one"
         git config --global user.email "autodeploy@localhost"
         git config --global user.name "AutoDeploy"
         git config --global pull.rebase false # Squelch nag message
-        git config --global http.postBuffer 524288000 # Fix buffer issue on Git Bash
-        git config --global https.postBuffer 524288000 # Fix buffer issue on Git Bash
         git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
         git clone --filter=blob:none --no-checkout $DL_LINK . # clone the repo with no files and no object history
         git config core.sparseCheckout true # enable sparse checkout
         git sparse-checkout init 
       else
         echo " === Using existing git repository"
-        git config --global http.postBuffer 524288000 # Fix buffer issue on Git Bash
-        git config --global https.postBuffer 524288000 # Fix buffer issue on Git Bash
         git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
       fi
       if [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does not want images
@@ -68,7 +64,7 @@ case $SOURCE in
       fi
       git checkout
       git fetch
-      git pull
+      git pull --depth=1
       VERSION=$(jq -r .version package.json) # Get version from package.json
       if [[ `git status --porcelain` ]]; then
         git restore .
