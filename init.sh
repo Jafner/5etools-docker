@@ -48,20 +48,16 @@ case $SOURCE in
         git config --global user.name "AutoDeploy"
         git config --global pull.rebase false # Squelch nag message
         git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
-        git clone --filter=blob:none --no-checkout $DL_LINK . # clone the repo with no files and no object history
-        git config core.sparseCheckout true # enable sparse checkout
-        git sparse-checkout init 
+        git clone $DL_LINK . # clone the repo with no files and no object history
       else
         echo " === Using existing git repository"
         git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
       fi
-      if [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does not want images
-        echo -e '/*\n!img' > .git/info/sparse-checkout # sparse checkout should include everything except the img directory
-        echo " === Pulling from GitHub without images..."
-      else
-        echo -e '/*' > .git/info/sparse-checkout # sparse checkout should include everything
-        echo " === Pulling from GitHub with images... (This will take a while)"
+      if ! [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does want images
+        echo " === Pulling images from GitHub... (This will take a while)"
+        git submodule add -f https://github.com/5etools-mirror-2/5etools-img /usr/local/apache2/htdocs/img
       fi
+      echo " === Pulling main files from GitHub..."
       git checkout
       git fetch
       git pull --depth=1

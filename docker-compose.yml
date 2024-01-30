@@ -11,16 +11,12 @@ services:
      - SOURCE=GITHUB
        # Required unless OFFLINE_MODE=TRUE and the site files are already present.
        # Expects one of GITHUB, GITHUB-NOIMG, GET5ETOOLS, or GET5ETOOLS-NOIMG. Where:
-       # GITHUB pulls from https://github.com/5etools-mirror-1/5etools-mirror-1
-       # GITHUB-NOIMG pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.
+       # GITHUB pulls from https://github.com/5etools-mirror-2/5etools-mirror-2.github.io and adds https://github.com/5etools-mirror-2/5etools-img as a submodule
+       # GITHUB-NOIMG pulls from https://github.com/5etools-mirror-2/5etools-mirror-2.github.io without adding the images submodule.
        # GET5ETOOLS pulls from https://get.5e.tools
        # GET5ETOOLS-NOIMG pulls from https://get.5e.tools without image files.
        # The get.5e.tools source has been down (redirecting to 5e.tools) during development.
        # This method is not tested.
-     #- GIT_URL=https://github.com/5etools-mirror-1/5etools-mirror-1.github.io.git
-       # Use this to override the default "official" mirror link. Only works for initial Git clone. 
-       # Does not work when an existing repository is present.
-       # Defaults to https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git
      #- OFFLINE_MODE=TRUE
        # Optional. Expects "TRUE" or "FALSE". 
 
