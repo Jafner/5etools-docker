@@ -49,7 +49,7 @@ else
     git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
 fi
 
-if ! [[ "$IMG" == "TRUE" ]]; then # if user wants images
+if [[ "$IMG" == "TRUE" ]]; then # if user wants images
     echo " === Pulling images from GitHub... (This will take a while)"
     git submodule add -f $IMG_LINK /usr/local/apache2/htdocs/img
 fi
