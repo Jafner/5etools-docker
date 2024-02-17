@@ -1,9 +1,12 @@
 #!/bin/bash
-# based (loosely) on: https://wiki.5e.tools/index.php/5eTools_Install_Guide
+
+# Print current user ID
+id
 
 # Ensure clean, non-root ownership of the htdocs directory.
-# Delete index.html if it's the stock apache file. Otherwise it impedes the git clone.
 chown -R $PUID:$PGID /usr/local/apache2/htdocs
+
+# Delete index.html if it's the stock apache file. Otherwise it impedes the git clone.
 if grep -Fq '<html><body><h1>It works!</h1></body></html>' "/usr/local/apache2/htdocs/index.html"; then
   rm /usr/local/apache2/htdocs/index.html
 fi
@@ -24,108 +27,43 @@ if [ "$OFFLINE_MODE" = "TRUE" ]; then
   fi
 fi
 
-# The SOURCE variable must be set if OFFLINE_MODE is not TRUE
-if [ -z "${SOURCE}" ]; then
-  echo " === SOURCE variable not set. Expects one of \"GITHUB\", \"GET5ETOOLS\", or \"GET5ETOOLS-NOIMG\". Exiting."
-  exit 1
-fi
-
 # Move to the working directory for working with files.
 cd /usr/local/apache2/htdocs
 
 echo " === Checking directory permissions for /usr/local/apache2/htdocs"
 ls -ld /usr/local/apache2/htdocs
 
-SOURCE=${SOURCE}
-echo "SOURCE=$SOURCE"
-case $SOURCE in 
-  GITHUB | GITHUB-NOIMG) # Source is the github mirror
-    DL_LINK=${GIT_URL:-https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git}
-    echo " === Using GitHub mirror at $DL_LINK"
-      if [ ! -d "./.git" ]; then # if no git repository already exists
-        echo " === No existing git repository, creating one"
-        git config --global user.email "autodeploy@localhost"
-        git config --global user.name "AutoDeploy"
-        git config --global pull.rebase false # Squelch nag message
-        git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
-        git clone $DL_LINK . # clone the repo with no files and no object history
-      else
-        echo " === Using existing git repository"
-        git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
-      fi
-      if ! [[ "$SOURCE" == *"NOIMG"* ]]; then # if user does want images
-        echo " === Pulling images from GitHub... (This will take a while)"
-        git submodule add -f https://github.com/5etools-mirror-2/5etools-img /usr/local/apache2/htdocs/img
-      fi
-      echo " === Pulling main files from GitHub..."
-      git checkout
-      git fetch
-      git pull --depth=1
-      VERSION=$(jq -r .version package.json) # Get version from package.json
-      if [[ `git status --porcelain` ]]; then
-        git restore .
-      fi
+DL_LINK=${DL_LINK:-https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git}
+IMG_LINK=${IMG_LINK:-https://github.com/5etools-mirror-2/5etools-img}
 
-      echo " === Starting version $VERSION"
-      httpd-foreground
-      ;;
+echo " === Using GitHub mirror at $DL_LINK"
+if [ ! -d "./.git" ]; then # if no git repository already exists
+    echo " === No existing git repository, creating one"
+    git config --global user.email "autodeploy@localhost"
+    git config --global user.name "AutoDeploy"
+    git config --global pull.rebase false # Squelch nag message
+    git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
+    git clone $DL_LINK . # clone the repo with no files and no object history
+else
+    echo " === Using existing git repository"
+    git config --global --add safe.directory '/usr/local/apache2/htdocs' # Disable directory ownership checking, required for mounted volumes
+fi
 
-  GET5ETOOLS | GET5ETOOLS-NOIMG)
-    DL_LINK=https://get.5e.tools
-    echo " === Using get structure to download from $DL_LINK"
-      echo " === WARNING: This part of the script has not yet been tested. Please open an issue on the github if you have trouble."
-      # get remote version number
-      # takes three steps of wizardry. I did not write this, but it works so I don't touch it.
-      FILENAME=`curl -s -k -I $DL_LINK/src/|grep filename|cut -d"=" -f2 | awk '{print $1}'` # returns like "5eTools.1.134.0.zip" (with quotes)
-      FILENAME=${FILENAME//[$'\t\r\n"']} # remove quotes, returns like 5eTools.1.134.0.zip
-      REMOTE_VERSION=`basename ${FILENAME} ".zip"|sed 's/5eTools\.//'` # get version number, returns like 1.134.0
-      if [ "$REMOTE_VERSION" != "$VERSION" ]; then
-        echo " === Local version ($VERSION) outdated, updating to $REMOTE_VERSION ..."
-        rm ./index.html 2> /dev/null || true
-        echo " === Downloading new remote version..."
-        mkdir -p ./download
-        cd ./download/
-        curl --progress-bar -k -O -J $DL_LINK/src/ -C -
-        
-        if [ "$SOURCE" != *"NOIMG"* ]; then # download images
-          echo " === Downloading images... "
-          curl --progress-bar -k -O -J $DL_LINK/img/ -C -
-        fi
-        
-        cd ..
+if ! [[ "$IMG" == "TRUE" ]]; then # if user wants images
+    echo " === Pulling images from GitHub... (This will take a while)"
+    git submodule add -f $IMG_LINK /usr/local/apache2/htdocs/img
+fi
 
-        echo " === Extracting site..."
-        7z x ./download/$FILENAME -o./ -y
+echo " === Pulling latest files from GitHub..."
+git checkout
+git fetch
+git pull --depth=1
+VERSION=$(jq -r .version package.json) # Get version from package.json
 
-        if [ "$SOURCE" != *"NOIMG"* ]; then # extract images
-          echo " === Extracting images..."
-          7z x ./download/$FILENAME_IMG -o./img -y
-          mv ./img/tmp/5et/img/* ./img
-          rm -r ./img/tmp
-        fi
+if [[ `git status --porcelain` ]]; then
+    git restore .
+fi
 
-        echo " === Configuring..." # honestly I don't know enough HTML/CSS/JS to tell exactly what this part of the script does :L
-        find . -name \*.html -exec sed -i 's/"width=device-width, initial-scale=1"/"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/' {} \;
-        sed -i 's/<head>/<head>\n<link rel="apple-touch-icon" href="icon\/icon-512.png">/' index.html
-        sed -i 's/navigator.serviceWorker.register("\/sw.js/navigator.serviceWorker.register("sw.js/' index.html
-        sed -i 's/navigator.serviceWorker.register("\/sw.js/navigator.serviceWorker.register("sw.js/' 5etools.html
+echo " === Starting version $VERSION"
 
-        echo " === Cleaning up downloads"
-        find ./download/ -type f ! -name "*.${VER}.zip" -exec rm {} + # delete the downloaded zip files
-
-        echo " === Done!"
-      else
-        echo " === Local version matches remote, no action."
-      fi 
-      VERSION=$(jq -r .version package.json) # Get version from package.json
-      echo " === Starting version $VERSION"
-      httpd-foreground
-      ;;
-
-  
-  *)
-    echo "SOURCE variable set incorrectly. Exiting..."
-    exit
-    ;;
-
-esac
+httpd-foreground

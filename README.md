@@ -1,4 +1,4 @@
-This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses components of the auto-updater script from the [5eTools wiki](https://wiki.5e.tools/index.php/5eTools_Install_Guide). This image is built from [this GitHub repository](https://github.com/Jafner/5etools-docker). 
+This is a simple image for hosting your own 5eTools instance. It is based on the Apache `httpd` image and uses components of the auto-updater script from the [5eTools wiki](https://wiki.tercept.net/en/5eTools/InstallGuide). This image is built from [this GitHub repository](https://github.com/Jafner/5etools-docker). 
 
 # Usage
 Below we talk about how to install and configure the container. 
@@ -52,17 +52,13 @@ volumes:
 The image uses environment variables to figure out how you want it to run. 
 By default, I assume you want to automatically download the latest files from the Github mirror. Use the environment variables in the `docker-compose.yml` file to configure things.
 
-### SOURCE (defaults to GITHUB-NOIMG)
+### IMG (defaults to FALSE)
 Required unless OFFLINE_MODE=TRUE.
-Expects one of "GITHUB", "GITHUB-NOIMG", "GET5ETOOLS", or "GET5ETOOLS-NOIMG". Where:  
-  > "GITHUB" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1  
-  > "GITHUB-NOIMG" pulls from https://github.com/5etools-mirror-1/5etools-mirror-1 without image files.  
-  > "GET5ETOOLS" pulls from https://get.5e.tools  
-  > "GET5ETOOLS-NOIMG" pulls from https://get.5e.tools without image files.  
+Expects one of "TRUE", "FALSE" Where:  
+  > "TRUE" pulls from https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git and adds https://github.com/5etools-mirror-2/5etools-img as a submodule for image files.
+  > "FALSE" pulls from https://github.com/5etools-mirror-2/5etools-mirror-2.github.io.git without image files.  
 
 The get.5e.tools source has been down (redirecting to 5e.tools) during development. This method is not tested.  
-
-**Note: As of December 2022, get.5e.tools has been down for several months**. The URL redirects to the main 5etools page, but does not provide packaged archives of the site like it used to. I will update this if or when the original get.5e.tools returns.
 
 ### OFFLINE_MODE
 Optional. Expects "TRUE" to enable. 
@@ -105,5 +101,6 @@ Then your `index.json` should look like:
     ]
 }
 ```
+
 Note the commas after each entry except the last in each array.
 See the [wiki page](https://wiki.5e.tools/index.php/5eTools_Install_Guide) for more information. 
